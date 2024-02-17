@@ -1,12 +1,14 @@
-interface ArticleProps {
-  previewerName: string;
-  previewerImage: string;
-  date: string;
-  title: string;
-  slug: string;
-  description: string;
-  tags: string[];
-  favoritesCount: number;
-}
+declare namespace Home {
+  type ArticleProps = {
+    previewerName: string;
+    previewerImage: string;
+    date: string;
+    title: string;
+    slug: string;
+    description: string;
+    tags: string[];
+    favoritesCount: number;
+  };
 
-export default ArticleProps;
+  type GetTagsResponse = { tags: string[] };
+}

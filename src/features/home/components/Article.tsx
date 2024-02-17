@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import ArticleProps from "../types";
 
 export default function Article({
   previewerName,
@@ -10,7 +9,7 @@ export default function Article({
   description,
   tags,
   favoritesCount
-}: ArticleProps) {
+}: Home.ArticleProps) {
   const linkToProfile = `/profile/${previewerName.toLowerCase().replace(" ", "-")}`;
 
   return (
@@ -34,8 +33,10 @@ export default function Article({
         <p>{description}</p>
         <span>Read more...</span>
         <ul className="tag-list">
-          {tags.map((tag) => (
-            <li className="tag-default tag-pill tag-outline">{tag}</li>
+          {tags.map((tag: string) => (
+            <li key={tag} className="tag-default tag-pill tag-outline">
+              {tag}
+            </li>
           ))}
         </ul>
       </Link>
