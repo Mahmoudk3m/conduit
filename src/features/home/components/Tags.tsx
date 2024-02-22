@@ -1,6 +1,6 @@
 import { useGetTags } from "../api/getTags";
 
-export default function Tags() {
+export default function Tags({ onTagChange }: { onTagChange: (tag: string) => void }) {
   const { data, isLoading, isError } = useGetTags();
   return (
     <div className="sidebar">
@@ -12,7 +12,7 @@ export default function Tags() {
           : isError
           ? "Error loading tags"
           : data?.tags.map((tag) => (
-              <a href="/" className="tag-pill tag-default" key={tag}>
+              <a onClick={() => onTagChange(tag)} className="tag-pill tag-default" key={tag}>
                 {tag}
               </a>
             ))}

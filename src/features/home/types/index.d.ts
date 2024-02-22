@@ -1,14 +1,36 @@
 declare namespace Home {
   type ArticleProps = {
-    previewerName: string;
-    previewerImage: string;
-    date: string;
-    title: string;
     slug: string;
+    title: string;
     description: string;
-    tags: string[];
+    body: string;
+    tagList: [string];
+    createdAt: Date;
+    updatedAt: Date;
+    favorited: boolean;
     favoritesCount: number;
+    author: {
+      username: string;
+      bio: string;
+      image: string;
+      following: boolean;
+    };
   };
 
   type GetTagsResponse = { tags: string[] };
+
+  type GetArticlesResponse = {
+    articles: ArticleProps[];
+    articlesCount: number;
+  };
+
+  type GetArticlesParams = {
+    params: {
+      tag?: string;
+      author?: string;
+      favorited?: string;
+      offset?: number;
+      limit?: number;
+    };
+  };
 }

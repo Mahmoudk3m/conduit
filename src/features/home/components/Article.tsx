@@ -1,28 +1,27 @@
 import { Link } from "react-router-dom";
 
 export default function Article({
-  previewerName,
-  previewerImage,
-  date,
-  title,
   slug,
+  title,
   description,
-  tags,
-  favoritesCount
+  tagList,
+  createdAt,
+  favoritesCount,
+  author
 }: Home.ArticleProps) {
-  const linkToProfile = `/profile/${previewerName.toLowerCase().replace(" ", "-")}`;
+  const linkToProfile = `/profile/${author.username.toLowerCase().replace(" ", "-")}`;
 
   return (
     <div className="article-preview">
       <div className="article-meta">
         <Link to={linkToProfile}>
-          <img src={previewerImage} />
+          <img src={author.image} />
         </Link>
         <div className="info">
           <Link to={linkToProfile} className="author">
-            {previewerName}
+            {author.username}
           </Link>
-          <span className="date">{date}</span>
+          <span className="date">{createdAt.toString()}</span>
         </div>
         <button className="btn btn-outline-primary btn-sm pull-xs-right">
           <i className="ion-heart"></i> {favoritesCount}
@@ -33,7 +32,7 @@ export default function Article({
         <p>{description}</p>
         <span>Read more...</span>
         <ul className="tag-list">
-          {tags.map((tag: string) => (
+          {tagList.map((tag: string) => (
             <li key={tag} className="tag-default tag-pill tag-outline">
               {tag}
             </li>
