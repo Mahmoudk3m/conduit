@@ -3,7 +3,7 @@ import FeedToggler from "./FeedToggler";
 import Article from "@/components/Shared/Article";
 import Pagination from "@/components/Shared/Pagination";
 import Tags from "./Tags";
-import { useGetArticles } from "../api/getArticles";
+import { useGetArticles } from "@/components/api/getArticles";
 import { useEffect, useRef, useState } from "react";
 import Loader from "@/components/Shared/Loader";
 

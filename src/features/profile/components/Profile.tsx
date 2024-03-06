@@ -2,7 +2,7 @@ import { NavLink, useParams } from "react-router-dom";
 import { useGetProfile } from "../api/getProfile";
 import Loader from "@/components/Shared/Loader";
 import { useEffect, useRef, useState } from "react";
-import { useGetArticles } from "@/features/home";
+import { useGetArticles } from "@/components/api/getArticles";
 import Article from "@/components/Shared/Article";
 import Pagination from "@/components/Shared/Pagination";
 
