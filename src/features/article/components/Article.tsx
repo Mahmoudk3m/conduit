@@ -1,35 +1,63 @@
+import { Link, useParams } from "react-router-dom";
+import { useGetArticle } from "../api/getArticle";
+import Loader from "@/components/Shared/Loader";
+import FollowButton from "@/components/Shared/FollowButton";
+import FavouriteButton from "@/components/Shared/FavouriteButton";
+
+const isSignedIn = false;
+
 export default function Article() {
+  const { slug } = useParams();
+  const { data, isLoading } = useGetArticle(slug);
+  const article = data?.article;
+  const createdAt = article?.createdAt
+    ? new Date(article.createdAt).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      })
+    : "";
+
+  const updatedAt = article?.updatedAt
+    ? new Date(article.updatedAt).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      })
+    : "";
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <div className="article-page">
       <div className="banner">
         <div className="container">
-          <h1>How to build webapps that scale</h1>
+          <h1>{article?.title}</h1>
 
           <div className="article-meta">
-            <a href="/profile/eric-simons">
-              <img src="http://i.imgur.com/Qr71crq.jpg" />
-            </a>
+            <Link to={`/profile/${article?.author.username}`}>
+              <img src={article?.author.image} />
+            </Link>
             <div className="info">
-              <a href="/profile/eric-simons" className="author">
-                Eric Simons
-              </a>
-              <span className="date">January 20th</span>
+              <Link to={`/profile/${article?.author.username}`} className="author">
+                {article?.author.username}
+              </Link>
+              <span className="date">{updatedAt}</span>
             </div>
-            <button className="btn btn-sm btn-outline-secondary">
-              <i className="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons <span className="counter">(10)</span>
-            </button>
+            {article && <FollowButton following={article.author.following} username={article.author.username} />}
             &nbsp;&nbsp;
-            <button className="btn btn-sm btn-outline-primary">
-              <i className="ion-heart"></i>
-              &nbsp; Favorite Post <span className="counter">(29)</span>
-            </button>
-            <button className="btn btn-sm btn-outline-secondary">
-              <i className="ion-edit"></i> Edit Article
-            </button>
-            <button className="btn btn-sm btn-outline-danger">
-              <i className="ion-trash-a"></i> Delete Article
-            </button>
+            {article && <FavouriteButton favorited={article.favorited} favouritesCount={article.favoritesCount} />}
+            {isSignedIn && (
+              <>
+                <button className="btn btn-sm btn-outline-secondary">
+                  <i className="ion-edit"></i> Edit Article
+                </button>
+                <button className="btn btn-sm btn-outline-danger">
+                  <i className="ion-trash-a"></i> Delete Article
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -37,12 +65,14 @@ export default function Article() {
       <div className="container page">
         <div className="row article-content">
           <div className="col-md-12">
-            <p>Web development technologies have evolved at an incredible clip over the past few years.</p>
-            <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-            <p>It's a great solution for learning how other frameworks work.</p>
+            <p>{article?.body}</p>
+
             <ul className="tag-list">
-              <li className="tag-default tag-pill tag-outline">realworld</li>
-              <li className="tag-default tag-pill tag-outline">implementations</li>
+              {article?.tagList.map((tag) => (
+                <li key={tag} className="tag-default tag-pill tag-outline">
+                  {tag}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -51,81 +81,93 @@ export default function Article() {
 
         <div className="article-actions">
           <div className="article-meta">
-            <a href="profile.html">
-              <img src="http://i.imgur.com/Qr71crq.jpg" />
-            </a>
+            <Link to={`/profile/${article?.author.username}`}>
+              <img src={article?.author.image} />
+            </Link>
             <div className="info">
-              <a href="" className="author">
-                Eric Simons
-              </a>
-              <span className="date">January 20th</span>
+              <Link to={`/profile/${article?.author.username}`} className="author">
+                {article?.author.username}
+              </Link>
+              <span className="date">{createdAt}</span>
             </div>
-            <button className="btn btn-sm btn-outline-secondary">
-              <i className="ion-plus-round"></i>
-              &nbsp; Follow Eric Simons
-            </button>
-            &nbsp;
-            <button className="btn btn-sm btn-outline-primary">
-              <i className="ion-heart"></i>
-              &nbsp; Favorite Article <span className="counter">(29)</span>
-            </button>
-            <button className="btn btn-sm btn-outline-secondary">
-              <i className="ion-edit"></i> Edit Article
-            </button>
-            <button className="btn btn-sm btn-outline-danger">
-              <i className="ion-trash-a"></i> Delete Article
-            </button>
+            {article && <FollowButton following={article.author.following} username={article.author.username} />}
+            &nbsp; &nbsp;
+            {article && <FavouriteButton favorited={article.favorited} favouritesCount={article.favoritesCount} />}
+            &nbsp; &nbsp;
+            {isSignedIn && (
+              <>
+                <button className="btn btn-sm btn-outline-secondary">
+                  <i className="ion-edit"></i> Edit Article
+                </button>
+                &nbsp; &nbsp;
+                <button className="btn btn-sm btn-outline-danger">
+                  <i className="ion-trash-a"></i> Delete Article
+                </button>
+              </>
+            )}
           </div>
         </div>
-
-        <div className="row">
-          <div className="col-xs-12 col-md-8 offset-md-2">
-            <form className="card comment-form">
-              <div className="card-block">
-                <textarea className="form-control" placeholder="Write a comment..." rows={3}></textarea>
-              </div>
-              <div className="card-footer">
-                <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                <button className="btn btn-sm btn-primary">Post Comment</button>
-              </div>
-            </form>
-
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-              </div>
-              <div className="card-footer">
-                <a href="/profile/author" className="comment-author">
+        {isSignedIn ? (
+          <div className="row">
+            <div className="col-xs-12 col-md-8 offset-md-2">
+              <form className="card comment-form">
+                <div className="card-block">
+                  <textarea className="form-control" placeholder="Write a comment..." rows={3}></textarea>
+                </div>
+                <div className="card-footer">
                   <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                </a>
-                &nbsp;
-                <a href="/profile/jacob-schmidt" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-              </div>
-            </div>
+                  <button className="btn btn-sm btn-primary">Post Comment</button>
+                </div>
+              </form>
 
-            <div className="card">
-              <div className="card-block">
-                <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
+              <div className="card">
+                <div className="card-block">
+                  <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                </div>
+                <div className="card-footer">
+                  <a href="/profile/author" className="comment-author">
+                    <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
+                  </a>
+                  &nbsp;
+                  <a href="/profile/jacob-schmidt" className="comment-author">
+                    Jacob Schmidt
+                  </a>
+                  <span className="date-posted">Dec 29th</span>
+                </div>
               </div>
-              <div className="card-footer">
-                <a href="/profile/author" className="comment-author">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                </a>
-                &nbsp;
-                <a href="/profile/jacob-schmidt" className="comment-author">
-                  Jacob Schmidt
-                </a>
-                <span className="date-posted">Dec 29th</span>
-                <span className="mod-options">
-                  <i className="ion-trash-a"></i>
-                </span>
+
+              <div className="card">
+                <div className="card-block">
+                  <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                </div>
+                <div className="card-footer">
+                  <a href="/profile/author" className="comment-author">
+                    <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
+                  </a>
+                  &nbsp;
+                  <a href="/profile/jacob-schmidt" className="comment-author">
+                    Jacob Schmidt
+                  </a>
+                  <span className="date-posted">Dec 29th</span>
+                  <span className="mod-options">
+                    <i className="ion-trash-a"></i>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <p>
+            <span>
+              <Link to="/login">Sign in</Link>
+            </span>
+            &nbsp; or &nbsp;
+            <span>
+              <Link to="/register">sign up</Link>
+            </span>
+            &nbsp; to add comments on this article.
+          </p>
+        )}
       </div>
     </div>
   );
