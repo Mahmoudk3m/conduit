@@ -8,7 +8,7 @@ const CommonRoutes = [
     element: <Home />
   },
   {
-    path: "/profile/:slug",
+    path: "/profile/:username",
     element: <Profile />
   },
   {

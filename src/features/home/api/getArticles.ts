@@ -8,5 +8,5 @@ const getArticles = async ({ params }: Home.GetArticlesParams): Promise<Home.Get
 };
 
 export const useGetArticles = (params: Home.GetArticlesParams) => {
-  return useQuery({ queryKey: ["Articles", params], queryFn: () => getArticles(params) });
+  return useQuery({ queryKey: ["Articles", params], queryFn: () => getArticles(params), enabled: !!params });
 };

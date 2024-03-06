@@ -1,23 +1,83 @@
+import { NavLink, useParams } from "react-router-dom";
+import { useGetProfile } from "../api/getProfile";
+import Loader from "@/components/Shared/Loader";
+import { useEffect, useRef, useState } from "react";
+import { useGetArticles } from "@/features/home";
+import Article from "@/components/Shared/Article";
+import Pagination from "@/components/Shared/Pagination";
+
+const isUserAccount = false;
+
 export default function Profile() {
+  const { username } = useParams();
+  const { data, isLoading, isError } = useGetProfile(username);
+
+  const [offset, setOffset] = useState(0);
+
+  const {
+    data: articlesData,
+    isLoading: articlesIsLoading,
+    isError: articlesIsError
+  } = useGetArticles({ params: { author: username, limit: 5, offset } });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const articlesCount = articlesData?.articlesCount;
+  const prevTotalPages = useRef(totalPages);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  useEffect(() => {
+    setOffset((currentPage - 1) * 5);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (articlesCount !== undefined) {
+      setTotalPages(Math.ceil(articlesCount / 5));
+      prevTotalPages.current = Math.ceil(articlesCount / 5);
+    } else {
+      setTotalPages(prevTotalPages.current);
+    }
+  }, [articlesCount]);
+
+  if (isError) {
+    return <div>Error fetching profile</div>;
+  }
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <div className="profile-page">
       <div className="user-info">
         <div className="container">
           <div className="row">
             <div className="col-xs-12 col-md-10 offset-md-1">
-              <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img" />
-              <h4>Eric Simons</h4>
-              <p>
-                Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from the Hunger Games
-              </p>
+              <img src={data?.profile.image} className="user-img" />
+              <h4>{data?.profile.username}</h4>
+              <p>{data?.profile.bio}</p>
               <button className="btn btn-sm btn-outline-secondary action-btn">
-                <i className="ion-plus-round"></i>
-                &nbsp; Follow Eric Simons
+                {data?.profile.following ? (
+                  <>
+                    <i className="ion-minus-round"></i>
+                    &nbsp; Unfollow {data?.profile.username}
+                  </>
+                ) : (
+                  <>
+                    <i className="ion-plus-round"></i>
+                    &nbsp; Follow {data?.profile.username}
+                  </>
+                )}
               </button>
-              <button className="btn btn-sm btn-outline-secondary action-btn">
-                <i className="ion-gear-a"></i>
-                &nbsp; Edit Profile Settings
-              </button>
+              {isUserAccount && (
+                <button className="btn btn-sm btn-outline-secondary action-btn">
+                  <i className="ion-gear-a"></i>
+                  &nbsp; Edit Profile Settings
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -29,82 +89,26 @@ export default function Profile() {
             <div className="articles-toggle">
               <ul className="nav nav-pills outline-active">
                 <li className="nav-item">
-                  <a className="nav-link active" href="">
+                  <NavLink className="nav-link" to={`/profile/${username}`}>
                     My Articles
-                  </a>
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="">
+                  <NavLink className="nav-link" to={`/profile/${username}/favorites`}>
                     Favorited Articles
-                  </a>
+                  </NavLink>
                 </li>
               </ul>
             </div>
+            {articlesIsError && <div>Error fetching articles</div>}
+            {articlesIsLoading && <Loader />}
+            {articlesData?.articles.map((article) => (
+              <Article key={article.slug} {...article} />
+            ))}
 
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="/profile/eric-simons">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div className="info">
-                  <a href="/profile/eric-simons" className="author">
-                    Eric Simons
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart"></i> 29
-                </button>
-              </div>
-              <a href="/article/how-to-buil-webapps-that-scale" className="preview-link">
-                <h1>How to build webapps that scale</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-                <ul className="tag-list">
-                  <li className="tag-default tag-pill tag-outline">realworld</li>
-                  <li className="tag-default tag-pill tag-outline">implementations</li>
-                </ul>
-              </a>
-            </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="/profile/albert-pai">
-                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                </a>
-                <div className="info">
-                  <a href="/profile/albert-pai" className="author">
-                    Albert Pai
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart"></i> 32
-                </button>
-              </div>
-              <a href="/article/the-song-you" className="preview-link">
-                <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-                <ul className="tag-list">
-                  <li className="tag-default tag-pill tag-outline">Music</li>
-                  <li className="tag-default tag-pill tag-outline">Song</li>
-                </ul>
-              </a>
-            </div>
-
-            <ul className="pagination">
-              <li className="page-item active">
-                <a className="page-link" href="">
-                  1
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="">
-                  2
-                </a>
-              </li>
-            </ul>
+            {prevTotalPages.current !== 1 && (
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            )}
           </div>
         </div>
       </div>

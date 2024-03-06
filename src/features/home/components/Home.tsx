@@ -1,10 +1,11 @@
 import Banner from "./Banner";
 import FeedToggler from "./FeedToggler";
-import Article from "./Article";
-import Pagination from "./Pagination";
+import Article from "@/components/Shared/Article";
+import Pagination from "@/components/Shared/Pagination";
 import Tags from "./Tags";
 import { useGetArticles } from "../api/getArticles";
 import { useEffect, useRef, useState } from "react";
+import Loader from "@/components/Shared/Loader";
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,7 +53,7 @@ export default function Home() {
         <div className="row">
           <div className="col-md-9">
             <FeedToggler isLoggedIn={false} tag={tag} activeFeed={feed} onChangeFeed={handleFeedChange} />
-            {isLoading && <div>Loading...</div>}
+            {isLoading && <Loader />}
             {isError && <div>Error fetching articles</div>}
             {data?.articles.map((article) => (
               <Article key={article.slug} {...article} />

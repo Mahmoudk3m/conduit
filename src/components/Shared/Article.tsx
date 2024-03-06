@@ -9,7 +9,7 @@ export default function Article({
   favoritesCount,
   author
 }: Home.ArticleProps) {
-  const linkToProfile = `/profile/@${author.username}`;
+  const linkToProfile = `/profile/${author.username}`;
 
   return (
     <div className="article-preview">
