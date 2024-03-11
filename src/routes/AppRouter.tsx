@@ -3,16 +3,17 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 import { AppLayout } from "@/components/Layout";
 import CommonRoutes from "./CommonRoutes";
-
-const isAuth = false;
-
-const router = createHashRouter([
-  {
-    element: <AppLayout />,
-    children: [...(isAuth ? ProtectedRoutes : PublicRoutes), ...CommonRoutes]
-  }
-]);
+import useUserStore from "@/stores/userStore";
 
 export default function AppRouter() {
+  const { user } = useUserStore();
+
+  const router = createHashRouter([
+    {
+      element: <AppLayout />,
+      children: [...(user ? ProtectedRoutes : PublicRoutes), ...CommonRoutes]
+    }
+  ]);
+
   return <RouterProvider router={router} />;
 }

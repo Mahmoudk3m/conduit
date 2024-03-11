@@ -7,6 +7,11 @@ const ProtectedRoutes = [
     element: <Settings />
   },
   {
+    path: "/editor/",
+    element: <Editor />
+  },
+
+  {
     path: "/editor/:slug",
     element: <Editor />
   }
