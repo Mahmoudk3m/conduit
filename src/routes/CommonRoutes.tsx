@@ -14,6 +14,11 @@ const CommonRoutes = [
   {
     path: "/article/:slug",
     element: <Article />
+  },
+  // Not Found
+  {
+    path: "*",
+    element: <div>Not Found</div>
   }
 ];
 

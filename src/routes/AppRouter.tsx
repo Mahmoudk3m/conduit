@@ -9,7 +9,7 @@ const isAuth = false;
 const router = createHashRouter([
   {
     element: <AppLayout />,
-    children: [...CommonRoutes, ...(isAuth ? ProtectedRoutes : PublicRoutes)]
+    children: [...(isAuth ? ProtectedRoutes : PublicRoutes), ...CommonRoutes]
   }
 ]);
 
