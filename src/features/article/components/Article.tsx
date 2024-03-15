@@ -1,14 +1,16 @@
 import { Link, useParams } from "react-router-dom";
 import { useGetArticle } from "../api/getArticle";
-import Loader from "@/components/Shared/Loader";
-import FollowButton from "@/components/Shared/FollowButton";
-import FavouriteButton from "@/components/Shared/FavouriteButton";
-
-const isSignedIn = false;
+import Loader from "@/Shared/components/Loader";
+import FollowButton from "@/Shared/components/FollowButton";
+import FavouriteButton from "@/Shared/components/FavouriteButton";
+import useUserStore from "@/stores/userStore";
 
 export default function Article() {
+  const { user } = useUserStore();
+
   const { slug } = useParams();
   const { data, isLoading } = useGetArticle(slug);
+  console.log(data, "data");
   const article = data?.article;
   const createdAt = article?.createdAt
     ? new Date(article.createdAt).toLocaleDateString("en-US", {
@@ -47,8 +49,14 @@ export default function Article() {
             </div>
             {article && <FollowButton following={article.author.following} username={article.author.username} />}
             &nbsp;&nbsp;
-            {article && <FavouriteButton favorited={article.favorited} favouritesCount={article.favoritesCount} />}
-            {isSignedIn && (
+            {article && (
+              <FavouriteButton
+                favorited={article.favorited}
+                favouritesCount={article.favoritesCount}
+                slug={article.slug}
+              />
+            )}
+            {user?.username === data?.article.author.username && (
               <>
                 <button className="btn btn-sm btn-outline-secondary">
                   <i className="ion-edit"></i> Edit Article
@@ -92,9 +100,15 @@ export default function Article() {
             </div>
             {article && <FollowButton following={article.author.following} username={article.author.username} />}
             &nbsp; &nbsp;
-            {article && <FavouriteButton favorited={article.favorited} favouritesCount={article.favoritesCount} />}
+            {article && (
+              <FavouriteButton
+                favorited={article.favorited}
+                favouritesCount={article.favoritesCount}
+                slug={article.slug}
+              />
+            )}
             &nbsp; &nbsp;
-            {isSignedIn && (
+            {user?.username === data?.article.author.username && (
               <>
                 <button className="btn btn-sm btn-outline-secondary">
                   <i className="ion-edit"></i> Edit Article
@@ -107,7 +121,7 @@ export default function Article() {
             )}
           </div>
         </div>
-        {isSignedIn ? (
+        {user ? (
           <div className="row">
             <div className="col-xs-12 col-md-8 offset-md-2">
               <form className="card comment-form">

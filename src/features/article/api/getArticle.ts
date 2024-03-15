@@ -6,5 +6,5 @@ const getArticle = async (slug: string | undefined): Promise<Article.GetArticleR
 };
 
 export const useGetArticle = (slug: string | undefined) => {
-  return useQuery({ queryKey: ["article", slug], queryFn: () => getArticle(slug), enabled: !!slug });
+  return useQuery({ queryKey: ["articles", slug], queryFn: () => getArticle(slug), enabled: !!slug });
 };

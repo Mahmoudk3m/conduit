@@ -33,4 +33,11 @@ declare namespace Home {
       limit?: number;
     };
   };
+
+  type GetFeedParams = {
+    params: {
+      offset: number;
+      limit: number;
+    };
+  };
 }

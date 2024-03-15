@@ -1,10 +1,10 @@
 import { NavLink, useParams } from "react-router-dom";
 import { useGetProfile } from "../api/getProfile";
-import Loader from "@/components/Shared/Loader";
+import Loader from "@/Shared/components/Loader";
 import { useEffect, useRef, useState } from "react";
-import { useGetArticles } from "@/components/api/getArticles";
-import Article from "@/components/Shared/Article";
-import Pagination from "@/components/Shared/Pagination";
+import { useGetArticles } from "@/Shared/api/getArticles";
+import Article from "@/Shared/components/Article";
+import Pagination from "@/Shared/components/Pagination";
 
 const isUserAccount = false;
 

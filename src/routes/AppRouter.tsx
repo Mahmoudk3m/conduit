@@ -1,7 +1,7 @@
 import { RouterProvider, createHashRouter } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
-import { AppLayout } from "@/components/Layout";
+import { AppLayout } from "@/Shared/Layout";
 import CommonRoutes from "./CommonRoutes";
 import useUserStore from "@/stores/userStore";
 

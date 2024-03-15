@@ -1,10 +1,11 @@
 import API_URL from "@/config";
 import Axios, { InternalAxiosRequestConfig } from "axios";
+import Cookies from "js-cookie";
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
-  const token = "";
+  const token = Cookies.get("token");
   if (token) {
-    config.headers.authorization = `${token}`;
+    config.headers.authorization = `Bearer ${token}`;
   }
   config.headers.Accept = "application/json";
   return config;

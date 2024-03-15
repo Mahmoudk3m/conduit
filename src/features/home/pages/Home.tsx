@@ -1,21 +1,29 @@
-import Banner from "./Banner";
-import FeedToggler from "./FeedToggler";
-import Article from "@/components/Shared/Article";
-import Pagination from "@/components/Shared/Pagination";
-import Tags from "./Tags";
-import { useGetArticles } from "@/components/api/getArticles";
+import Banner from "../components/Banner";
+import FeedToggler from "../components/FeedToggler";
+import Article from "@/Shared/components/Article";
+import Pagination from "@/Shared/components/Pagination";
+import Tags from "../components/Tags";
+import { useGetArticles } from "@/Shared/api/getArticles";
 import { useEffect, useRef, useState } from "react";
-import Loader from "@/components/Shared/Loader";
+import Loader from "@/Shared/components/Loader";
+import useUserStore from "@/stores/userStore";
 
 export default function Home() {
+  const { user } = useUserStore();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [offset, setOffset] = useState(0);
   const [tag, setTag] = useState<string>();
   const [feed, setFeed] = useState("global");
-  const { data, isLoading, isError } = useGetArticles({ params: { limit: 10, offset, tag } });
 
-  const articlesCount = data?.articlesCount;
+  const { data, isLoading, isError } = useGetArticles(
+    {
+      params: { limit: 10, offset, tag }
+    },
+    feed === "yourFeed"
+  );
+
   const prevTotalPages = useRef(totalPages);
 
   const handlePageChange = (page: number) => {
@@ -37,6 +45,8 @@ export default function Home() {
     setOffset((currentPage - 1) * 10);
   }, [currentPage]);
 
+  const articlesCount = data?.articlesCount;
+
   useEffect(() => {
     if (articlesCount !== undefined) {
       setTotalPages(Math.ceil(articlesCount / 10));
@@ -52,9 +62,10 @@ export default function Home() {
       <div className="container page">
         <div className="row">
           <div className="col-md-9">
-            <FeedToggler isLoggedIn={false} tag={tag} activeFeed={feed} onChangeFeed={handleFeedChange} />
+            <FeedToggler isLoggedIn={!!user} tag={tag} activeFeed={feed} onChangeFeed={handleFeedChange} />
             {isLoading && <Loader />}
             {isError && <div>Error fetching articles</div>}
+            {data?.articles.length === 0 && !isLoading && <div>No articles are here... yet.</div>}
             {data?.articles.map((article) => (
               <Article key={article.slug} {...article} />
             ))}
