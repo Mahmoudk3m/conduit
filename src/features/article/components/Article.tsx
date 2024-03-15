@@ -10,7 +10,6 @@ export default function Article() {
 
   const { slug } = useParams();
   const { data, isLoading } = useGetArticle(slug);
-  console.log(data, "data");
   const article = data?.article;
   const createdAt = article?.createdAt
     ? new Date(article.createdAt).toLocaleDateString("en-US", {
@@ -51,7 +50,7 @@ export default function Article() {
             &nbsp;&nbsp;
             {article && (
               <FavouriteButton
-                favorited={article.favorited}
+                favourited={article.favorited}
                 favouritesCount={article.favoritesCount}
                 slug={article.slug}
               />
@@ -102,7 +101,7 @@ export default function Article() {
             &nbsp; &nbsp;
             {article && (
               <FavouriteButton
-                favorited={article.favorited}
+                favourited={article.favorited}
                 favouritesCount={article.favoritesCount}
                 slug={article.slug}
               />

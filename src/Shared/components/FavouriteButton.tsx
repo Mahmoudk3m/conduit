@@ -1,42 +1,35 @@
 import { useFavouriteArticle } from "../api/favouriteArticle";
-import { useUnfavouriteArticle } from "../api/unfavouriteArticle";
 
 const FavouriteButton = ({
-  favorited,
+  favourited,
   favouritesCount,
   post,
   slug
 }: {
-  favorited: boolean;
+  favourited: boolean;
   favouritesCount: number;
   post?: boolean;
   slug: string;
 }) => {
-  const { mutate: favouriteArticle, isLoading: isFavouriteLoading } = useFavouriteArticle(slug);
-  const { mutate: unfavouriteArticle, isLoading: isUnfavouriteLoading } = useUnfavouriteArticle(slug);
-
-  const handleFavourite = () => {
-    if (favorited) {
-      unfavouriteArticle();
-      return;
-    }
-    favouriteArticle();
-  };
+  const { mutate: favouriteArticle, isLoading } = useFavouriteArticle({
+    slug,
+    favourited
+  });
 
   return (
     <>
-      {favorited ? (
+      {favourited ? (
         <button
-          onClick={handleFavourite}
-          className={`btn btn-sm btn-outline-primary ${isFavouriteLoading || (isUnfavouriteLoading && "disabled")}`}
+          onClick={() => favouriteArticle()}
+          className={`btn btn-sm btn-outline-primary ${isLoading && "disabled"}`}
         >
           <i className="ion-heart"></i>
           &nbsp; Unfavorite {post ? "post" : "article"} <span className="counter">({favouritesCount})</span>
         </button>
       ) : (
         <button
-          onClick={handleFavourite}
-          className={`btn btn-sm btn-outline-primary ${isFavouriteLoading || (isUnfavouriteLoading && "disabled")}`}
+          onClick={() => favouriteArticle()}
+          className={`btn btn-sm btn-outline-primary ${isLoading && "disabled"}`}
         >
           <i className="ion-heart"></i>
           &nbsp; Favorite {post ? "post" : "article"}

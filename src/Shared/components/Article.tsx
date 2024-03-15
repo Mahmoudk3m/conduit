@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useFavouriteArticle } from "../api/favouriteArticle";
-import { useUnfavouriteArticle } from "../api/unfavouriteArticle";
 
 export default function Article({
   slug,
@@ -14,16 +13,10 @@ export default function Article({
 }: Home.ArticleProps) {
   const linkToProfile = `/profile/${author.username}`;
 
-  const { mutate: favouriteArticle, isLoading: isFavouriteLoading } = useFavouriteArticle(slug);
-  const { mutate: unfavouriteArticle, isLoading: isUnfavouriteLoading } = useUnfavouriteArticle(slug);
-
-  const handleFavourite = () => {
-    if (favorited) {
-      unfavouriteArticle();
-      return;
-    }
-    favouriteArticle();
-  };
+  const { mutate: favouriteArticle, isLoading } = useFavouriteArticle({
+    slug,
+    favourited: favorited
+  });
 
   return (
     <div className="article-preview">
@@ -38,9 +31,9 @@ export default function Article({
           <span className="date">{createdAt.toString()}</span>
         </div>
         <button
-          onClick={handleFavourite}
+          onClick={() => favouriteArticle()}
           className={`btn btn-sm pull-xs-right ${favorited ? "btn-primary" : "btn-outline-primary"} ${
-            isFavouriteLoading || isUnfavouriteLoading ? "disabled" : ""
+            isLoading ? "disabled" : ""
           } `}
         >
           <i className="ion-heart"></i> {favoritesCount}
