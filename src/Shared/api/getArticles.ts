@@ -9,7 +9,7 @@ const getArticles = async ({
   endpoint?: boolean;
 }): Promise<Home.GetArticlesResponse> => {
   return await axiosClient.get(`/articles${endpoint ? `/feed` : ""}`, {
-    params
+    ...params
   });
 };
 

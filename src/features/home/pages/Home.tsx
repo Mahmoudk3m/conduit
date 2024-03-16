@@ -17,12 +17,7 @@ export default function Home() {
   const [tag, setTag] = useState<string>();
   const [feed, setFeed] = useState("global");
 
-  const { data, isLoading, isError } = useGetArticles(
-    {
-      params: { limit: 10, offset, tag }
-    },
-    feed === "yourFeed"
-  );
+  const { data, isLoading, isError } = useGetArticles({ params: { limit: 10, offset, tag } }, feed === "yourFeed");
 
   const prevTotalPages = useRef(totalPages);
 
