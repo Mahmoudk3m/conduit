@@ -5,10 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { useGetArticles } from "@/Shared/api/getArticles";
 import Article from "@/Shared/components/Article";
 import Pagination from "@/Shared/components/Pagination";
-
-const isUserAccount = false;
+import useUserStore from "@/stores/userStore";
+import FollowButton from "@/Shared/components/FollowButton";
 
 export default function Profile() {
+  const { user } = useUserStore();
   const { username } = useParams();
   const { data, isLoading, isError } = useGetProfile(username);
 
@@ -22,8 +23,13 @@ export default function Profile() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [followed, setFollowed] = useState(data?.profile.following || false);
   const articlesCount = articlesData?.articlesCount;
   const prevTotalPages = useRef(totalPages);
+
+  useEffect(() => {
+    setFollowed(data?.profile.following || false);
+  }, [data]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -59,20 +65,8 @@ export default function Profile() {
               <img src={data?.profile.image} className="user-img" />
               <h4>{data?.profile.username}</h4>
               <p>{data?.profile.bio}</p>
-              <button className="btn btn-sm btn-outline-secondary action-btn">
-                {data?.profile.following ? (
-                  <>
-                    <i className="ion-minus-round"></i>
-                    &nbsp; Unfollow {data?.profile.username}
-                  </>
-                ) : (
-                  <>
-                    <i className="ion-plus-round"></i>
-                    &nbsp; Follow {data?.profile.username}
-                  </>
-                )}
-              </button>
-              {isUserAccount && (
+              <FollowButton followed={followed} setFollowed={setFollowed} username={data?.profile.username || ""} />
+              {user?.username === data?.profile.username && (
                 <button className="btn btn-sm btn-outline-secondary action-btn">
                   <i className="ion-gear-a"></i>
                   &nbsp; Edit Profile Settings

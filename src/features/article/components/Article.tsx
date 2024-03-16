@@ -4,6 +4,7 @@ import Loader from "@/Shared/components/Loader";
 import FollowButton from "@/Shared/components/FollowButton";
 import FavouriteButton from "@/Shared/components/FavouriteButton";
 import useUserStore from "@/stores/userStore";
+import { useEffect, useState } from "react";
 
 export default function Article() {
   const { user } = useUserStore();
@@ -26,6 +27,13 @@ export default function Article() {
         year: "numeric"
       })
     : "";
+
+  const [followed, setFollowed] = useState(article?.author.following || false);
+
+  useEffect(() => {
+    setFollowed(article?.author.following || false);
+  }, [article]);
+
   if (isLoading) {
     return <Loader />;
   }
@@ -46,7 +54,9 @@ export default function Article() {
               </Link>
               <span className="date">{updatedAt}</span>
             </div>
-            {article && <FollowButton following={article.author.following} username={article.author.username} />}
+            {article && (
+              <FollowButton followed={followed} setFollowed={setFollowed} username={article.author.username} />
+            )}
             &nbsp;&nbsp;
             {article && (
               <FavouriteButton
@@ -97,7 +107,9 @@ export default function Article() {
               </Link>
               <span className="date">{createdAt}</span>
             </div>
-            {article && <FollowButton following={article.author.following} username={article.author.username} />}
+            {article && (
+              <FollowButton followed={followed} setFollowed={setFollowed} username={article.author.username} />
+            )}
             &nbsp; &nbsp;
             {article && (
               <FavouriteButton
