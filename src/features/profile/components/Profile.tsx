@@ -87,11 +87,6 @@ export default function Profile() {
                     My Articles
                   </NavLink>
                 </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link" to={`/profile/${username}/favorites`}>
-                    Favorited Articles
-                  </NavLink>
-                </li>
               </ul>
             </div>
             {articlesIsError && <div>Error fetching articles</div>}
