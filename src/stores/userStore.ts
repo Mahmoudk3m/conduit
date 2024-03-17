@@ -7,7 +7,7 @@ type User = {
   username: string;
   bio: string;
   image: string;
-};
+} | null;
 
 type UserStoreState = {
   user: User | null;
