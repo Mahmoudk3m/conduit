@@ -5,12 +5,16 @@ import FollowButton from "@/Shared/components/FollowButton";
 import FavouriteButton from "@/Shared/components/FavouriteButton";
 import useUserStore from "@/stores/userStore";
 import { useEffect, useState } from "react";
+import CommentForm from "../components/CommentForm";
+import { useGetComments } from "../api/getComments";
+import CommentCard from "../components/CommentCard";
 
 export default function Article() {
   const { user } = useUserStore();
-
   const { slug } = useParams();
   const { data, isLoading } = useGetArticle(slug);
+  const { data: commentsData, isLoading: commentsIsLoading } = useGetComments(slug || "");
+
   const article = data?.article;
   const createdAt = article?.createdAt
     ? new Date(article.createdAt).toLocaleDateString("en-US", {
@@ -135,50 +139,11 @@ export default function Article() {
         {user ? (
           <div className="row">
             <div className="col-xs-12 col-md-8 offset-md-2">
-              <form className="card comment-form">
-                <div className="card-block">
-                  <textarea className="form-control" placeholder="Write a comment..." rows={3}></textarea>
-                </div>
-                <div className="card-footer">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                  <button className="btn btn-sm btn-primary">Post Comment</button>
-                </div>
-              </form>
-
-              <div className="card">
-                <div className="card-block">
-                  <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                </div>
-                <div className="card-footer">
-                  <a href="/profile/author" className="comment-author">
-                    <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                  </a>
-                  &nbsp;
-                  <a href="/profile/jacob-schmidt" className="comment-author">
-                    Jacob Schmidt
-                  </a>
-                  <span className="date-posted">Dec 29th</span>
-                </div>
-              </div>
-
-              <div className="card">
-                <div className="card-block">
-                  <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                </div>
-                <div className="card-footer">
-                  <a href="/profile/author" className="comment-author">
-                    <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                  </a>
-                  &nbsp;
-                  <a href="/profile/jacob-schmidt" className="comment-author">
-                    Jacob Schmidt
-                  </a>
-                  <span className="date-posted">Dec 29th</span>
-                  <span className="mod-options">
-                    <i className="ion-trash-a"></i>
-                  </span>
-                </div>
-              </div>
+              <CommentForm slug={slug ?? ""} />
+              {commentsIsLoading && <Loader />}
+              {commentsData?.comments.map((comment) => (
+                <CommentCard key={comment.id} comment={comment} slug={slug ?? ""} />
+              ))}
             </div>
           </div>
         ) : (

@@ -1,4 +1,4 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useGetProfile } from "../api/getProfile";
 import Loader from "@/Shared/components/Loader";
 import { useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ import FollowButton from "@/Shared/components/FollowButton";
 export default function Profile() {
   const { user } = useUserStore();
   const { username } = useParams();
+  const navigate = useNavigate();
   const { data, isLoading, isError } = useGetProfile(username);
 
   const [offset, setOffset] = useState(0);
@@ -65,9 +66,11 @@ export default function Profile() {
               <img src={data?.profile.image} className="user-img" />
               <h4>{data?.profile.username}</h4>
               <p>{data?.profile.bio}</p>
-              <FollowButton followed={followed} setFollowed={setFollowed} username={data?.profile.username || ""} />
+              {user?.username !== data?.profile.username && (
+                <FollowButton followed={followed} setFollowed={setFollowed} username={data?.profile.username || ""} />
+              )}
               {user?.username === data?.profile.username && (
-                <button className="btn btn-sm btn-outline-secondary action-btn">
+                <button onClick={() => navigate("/settings")} className="btn btn-sm btn-outline-secondary action-btn">
                   <i className="ion-gear-a"></i>
                   &nbsp; Edit Profile Settings
                 </button>
