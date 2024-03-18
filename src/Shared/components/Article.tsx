@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFavouriteArticle } from "../api/favouriteArticle";
+import useUserStore from "@/stores/userStore";
 
 export default function Article({
   slug,
@@ -12,11 +13,21 @@ export default function Article({
   favorited
 }: Home.ArticleProps) {
   const linkToProfile = `/profile/${author.username}`;
+  const { user } = useUserStore();
+  const navigate = useNavigate();
 
   const { mutate: favouriteArticle, isLoading } = useFavouriteArticle({
     slug,
     favourited: favorited
   });
+
+  const handleFavourite = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      favouriteArticle();
+    }
+  };
 
   return (
     <div className="article-preview">
@@ -31,7 +42,7 @@ export default function Article({
           <span className="date">{createdAt.toString()}</span>
         </div>
         <button
-          onClick={() => favouriteArticle()}
+          onClick={handleFavourite}
           className={`btn btn-sm pull-xs-right ${favorited ? "btn-primary" : "btn-outline-primary"} ${
             isLoading ? "disabled" : ""
           } `}

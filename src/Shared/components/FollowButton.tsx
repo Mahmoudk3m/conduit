@@ -1,4 +1,6 @@
 import { useFollowUser } from "@/features/profile/api/followUser";
+import useUserStore from "@/stores/userStore";
+import { useNavigate } from "react-router-dom";
 
 export default function FollowButton({
   username,
@@ -9,12 +11,19 @@ export default function FollowButton({
   followed: boolean;
   setFollowed: (prev: boolean) => void;
 }) {
+  const { user } = useUserStore();
+  const navigate = useNavigate();
   const { mutate, isLoading } = useFollowUser({
     username: username,
     followed: followed
   });
 
   const handleFollow = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     mutate(undefined, {
       onSuccess: () => {
         setFollowed(!followed);
