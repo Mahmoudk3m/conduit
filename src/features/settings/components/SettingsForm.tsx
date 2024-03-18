@@ -44,7 +44,7 @@ export default function SettingsForm() {
             type="text"
             placeholder="URL of profile picture"
             defaultValue={user?.image}
-            {...register("profilePicture")}
+            {...register("image")}
           />
         </fieldset>
         <fieldset className="form-group">

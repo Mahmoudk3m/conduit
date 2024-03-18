@@ -14,7 +14,7 @@ export const useUpdateUser = () => {
   return useMutation({
     onSuccess: async (data) => {
       setUser(data.user);
-      navigate("/");
+      navigate(`/profile/${data.user.username}`);
     },
     mutationFn: updateUser
   });

@@ -94,6 +94,7 @@ export default function Profile() {
             </div>
             {articlesIsError && <div>Error fetching articles</div>}
             {articlesIsLoading && <Loader />}
+            {articlesData?.articles.length === 0 && <div style={{ padding: 16 }}>No articles are here... yet.</div>}
             {articlesData?.articles.map((article) => (
               <Article key={article.slug} {...article} />
             ))}
