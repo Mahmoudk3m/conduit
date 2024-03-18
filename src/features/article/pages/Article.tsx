@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useGetArticle } from "../api/getArticle";
 import Loader from "@/Shared/components/Loader";
 import FollowButton from "@/Shared/components/FollowButton";
@@ -8,12 +8,19 @@ import { useEffect, useState } from "react";
 import CommentForm from "../components/CommentForm";
 import { useGetComments } from "../api/getComments";
 import CommentCard from "../components/CommentCard";
+import { useUpdateArticle } from "@/features/edit-article";
 
 export default function Article() {
+  const navigate = useNavigate();
   const { user } = useUserStore();
   const { slug } = useParams();
   const { data, isLoading } = useGetArticle(slug);
   const { data: commentsData, isLoading: commentsIsLoading } = useGetComments(slug || "");
+  const { mutate } = useUpdateArticle();
+
+  const handleDeleteArticle = () => {
+    mutate({ slug: slug, req: "delete" });
+  };
 
   const article = data?.article;
   const createdAt = article?.createdAt
@@ -58,11 +65,11 @@ export default function Article() {
               </Link>
               <span className="date">{updatedAt}</span>
             </div>
-            {article && (
+            {article && user?.username !== data?.article.author.username && (
               <FollowButton followed={followed} setFollowed={setFollowed} username={article.author.username} />
             )}
-            &nbsp;&nbsp;
-            {article && (
+            &nbsp;
+            {article && user?.username !== data?.article.author.username && (
               <FavouriteButton
                 favourited={article.favorited}
                 favouritesCount={article.favoritesCount}
@@ -71,10 +78,11 @@ export default function Article() {
             )}
             {user?.username === data?.article.author.username && (
               <>
-                <button className="btn btn-sm btn-outline-secondary">
+                <button className="btn btn-sm btn-outline-secondary" onClick={() => navigate(`/editor/${slug}`)}>
                   <i className="ion-edit"></i> Edit Article
                 </button>
-                <button className="btn btn-sm btn-outline-danger">
+                &nbsp;
+                <button className="btn btn-sm btn-outline-danger" onClick={handleDeleteArticle}>
                   <i className="ion-trash-a"></i> Delete Article
                 </button>
               </>
@@ -111,25 +119,25 @@ export default function Article() {
               </Link>
               <span className="date">{createdAt}</span>
             </div>
-            {article && (
+            {article && user?.username !== data?.article.author.username && (
               <FollowButton followed={followed} setFollowed={setFollowed} username={article.author.username} />
             )}
-            &nbsp; &nbsp;
-            {article && (
+            &nbsp;
+            {article && user?.username !== data?.article.author.username && (
               <FavouriteButton
                 favourited={article.favorited}
                 favouritesCount={article.favoritesCount}
                 slug={article.slug}
               />
             )}
-            &nbsp; &nbsp;
+            &nbsp;
             {user?.username === data?.article.author.username && (
               <>
-                <button className="btn btn-sm btn-outline-secondary">
+                <button className="btn btn-sm btn-outline-secondary" onClick={() => navigate(`/editor/${slug}`)}>
                   <i className="ion-edit"></i> Edit Article
                 </button>
-                &nbsp; &nbsp;
-                <button className="btn btn-sm btn-outline-danger">
+                &nbsp;
+                <button className="btn btn-sm btn-outline-danger" onClick={handleDeleteArticle}>
                   <i className="ion-trash-a"></i> Delete Article
                 </button>
               </>
